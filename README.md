@@ -73,6 +73,7 @@ The workflow `vv-uat.yml` has no path filter, no branch filter and no commit-mes
 
 ## Known limits (checked on 2026-11-06)
 
-- A ruleset cannot be created on this repository while it is private under a personal account on the GitHub Free plan. The API answers: "Upgrade to GitHub Pro or make this repository public to enable this feature." Options: make the repository public (the data is synthetic, but Jira context is added to pull requests and shows to everyone on a public repository), move it to an organisation that has the feature, or show step 6 with screenshots.
+- This repository is public. Keep real data, real names and customer information out of it, and out of the Jira items that the agent reads. The Jira page warns that the context the agent captures from a Jira work item is added to the pull request and is visible to everyone if the repository is public.
+- Rulesets work on a public repository with the GitHub Free plan. On a private repository under a personal Free account the API refuses them.
 - The documentation of the Jira integration describes GitHub organisations only. Whether it works with a repository under a personal account is not stated. Test it before you rely on it.
 - Prompt files are a public preview feature. Check that `/test-cases` appears in the chat of your editor.
