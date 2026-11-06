@@ -6,6 +6,12 @@ The feature in the story: hold a lab result for review when it differs too much 
 
 The idea behind the demo: the AI drafts at every step, and a person approves at every step. Review and V&V stay with people.
 
+## Links
+
+- Step-by-step runbook with prompts, approval points and fallbacks: [DEMO.md](DEMO.md)
+- Jira board (project ALGW, Kanban): https://zartis-demos.atlassian.net/jira/software/projects/ALGW/boards/4
+- Jira stories: ALGW-1, ALGW-2, ALGW-3 (texts in [fallback/02-stories.md](fallback/02-stories.md))
+
 ## Quick start
 
 ```
