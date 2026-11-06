@@ -1,0 +1,5 @@
+# Replace the handles before the demo. Owners need write access to the repository.
+# Every pull request asks V&V for a review.
+*              @REPLACE-vv-account
+# Restricted code also goes to a person who reviews access rules.
+/src/Access/   @REPLACE-vv-account @REPLACE-access-reviewer

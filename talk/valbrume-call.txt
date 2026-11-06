@@ -1,0 +1,12 @@
+Call excerpt (invented). Roles only. Centre Hospitalier de Valbrume is a made-up hospital.
+
+1. BIO: Our autovalidation lets through results that are far from the previous value for the same patient. A colleague then catches them by eye.
+2. PO: So you want the system to stop those and send them to the review list?
+3. BIO: Yes. Compare the new result with the last one from the previous two weeks. If the change is too big, hold it and show me why.
+4. IT: Is the limit the same for every analysis?
+5. BIO: No. It is set per analysis. We keep it in our validation file. I do not want a developer to choose the numbers.
+6. PO: What if there is no previous result?
+7. BIO: Then this rule cannot say anything. Other rules still apply. But the screen must show "no history", not stay silent.
+8. QM: Any change to a limit needs two of us to approve, and we must be able to print who changed what and when.
+9. IT: The hospital tender document has a line on this. I will read it out.
+10. IT (reading, invented, in the style of a tender clause): "The system shall allow, per test, a delta check against the patient's previous result, traceability of every parameter change, and holding of out-of-limit results for validation by a biologist."

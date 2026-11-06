@@ -1,0 +1,14 @@
+{
+  "now": "2026-11-12T10:00:00Z",
+  "rule": { "id": "DELTA-CREA", "analysis": "CREA", "limitPercent": 25, "windowDays": 14 },
+  "samples": [
+    { "id": "TEST-0001", "analysis": "CREA", "previous": { "value": 80, "unit": "umol/L", "at": "2026-11-09T09:00:00Z" }, "current": { "value": 90, "unit": "umol/L" } },
+    { "id": "TEST-0002", "analysis": "CREA", "previous": { "value": 80, "unit": "umol/L", "at": "2026-11-09T09:00:00Z" }, "current": { "value": 110, "unit": "umol/L" } },
+    { "id": "TEST-0003", "analysis": "CREA", "previous": { "value": 120, "unit": "umol/L", "at": "2026-11-09T09:00:00Z" }, "current": { "value": 80, "unit": "umol/L" } },
+    { "id": "TEST-0004", "analysis": "CREA", "previous": null, "current": { "value": 85, "unit": "umol/L" } },
+    { "id": "TEST-0005", "analysis": "CREA", "previous": { "value": 80, "unit": "umol/L", "at": "2026-10-23T09:00:00Z" }, "current": { "value": 140, "unit": "umol/L" } },
+    { "id": "TEST-0006", "analysis": "CREA", "previous": { "value": 80, "unit": "umol/L", "at": "2026-11-09T09:00:00Z" }, "current": { "value": 100, "unit": "umol/L" } },
+    { "id": "TEST-0007", "analysis": "CREA", "previous": { "value": 0.9, "unit": "mg/dL", "at": "2026-11-09T09:00:00Z" }, "current": { "value": 80, "unit": "umol/L" } },
+    { "id": "TEST-0008", "analysis": "CREA", "previous": { "value": 80, "unit": "umol/L", "at": "2026-11-09T09:00:00Z" }, "current": { "value": 101, "unit": "umol/L" } }
+  ]
+}

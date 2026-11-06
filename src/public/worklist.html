@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Results review worklist</title>
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 2rem; color: #06302F; background: #F3F8F6; }
+    nav a { margin-right: 1rem; color: #06302F; }
+    table { border-collapse: collapse; width: 100%; background: #fff; }
+    th, td { border: 1px solid #D9E2DE; padding: .4rem .6rem; text-align: left; }
+    th { background: #E7F0EC; }
+    .badge { padding: .1rem .5rem; border-radius: 4px; background: #DCEAE5; }
+    .badge.held { background: #F5E3DF; color: #9a2a20; font-weight: 600; }
+    .note { color: #385959; }
+    fieldset { border: 1px solid #D9E2DE; background: #fff; margin: 1rem 0; }
+    [role=tab] { padding: .3rem .8rem; border: 1px solid #D9E2DE; background: #fff; cursor: pointer; }
+    [role=tab][aria-selected=true] { background: #DCEAE5; }
+  </style>
+</head>
+<body>
+  <nav><a href="/">Results review worklist</a><a href="/config.html">Rule configuration</a></nav>
+  <h1>Results review worklist</h1>
+  <p class="note">Fictional example. Synthetic data. Not a product feature.</p>
+  <table>
+    <thead>
+      <tr><th>Sample</th><th>Analysis</th><th>Previous</th><th>New</th><th>Status</th><th>Reason</th><th>Change</th><th>Trace</th></tr>
+    </thead>
+    <tbody id="rows"></tbody>
+  </table>
+  <script>
+    const REASONS = {
+      DELTA_EXCEEDED: "Change is larger than the limit",
+      UNIT_MISMATCH: "Units differ: not compared",
+      NO_HISTORY: "No history: the delta check did not run",
+      OUT_OF_WINDOW: "Previous result is too old: the delta check did not run",
+      NOT_BUILT: "The delta check is not built yet",
+    };
+
+    function cell(row, text, testId) {
+      const td = document.createElement("td");
+      if (testId) td.dataset.testid = testId;
+      td.textContent = text;
+      row.appendChild(td);
+      return td;
+    }
+
+    function show(results) {
+      const body = document.getElementById("rows");
+      body.textContent = "";
+      for (const r of results) {
+        const tr = document.createElement("tr");
+        tr.dataset.testid = "row-" + r.id;
+        cell(tr, r.id);
+        cell(tr, r.analysis);
+        cell(tr, r.previous ? r.previous.value + " " + r.previous.unit + " (" + r.previous.at.slice(0, 10) + ")" : "none", "previous");
+        cell(tr, r.current.value + " " + r.current.unit, "current");
+        const status = cell(tr, "", "status");
+        const badge = document.createElement("span");
+        badge.dataset.testid = "badge";
+        badge.className = "badge" + (r.held ? " held" : "");
+        badge.textContent = r.held ? "Held" : "Released";
+        status.appendChild(badge);
+        cell(tr, REASONS[r.reason ?? r.trace] ?? "", "reason");
+        cell(tr, r.percent ?? "", "percent");
+        cell(tr, r.trace, "trace");
+        body.appendChild(tr);
+      }
+    }
+
+    fetch("/api/results").then((r) => r.json()).then(show);
+  </script>
+</body>
+</html>

@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Rule configuration</title>
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 2rem; color: #06302F; background: #F3F8F6; }
+    nav a { margin-right: 1rem; color: #06302F; }
+    table { border-collapse: collapse; width: 100%; background: #fff; }
+    th, td { border: 1px solid #D9E2DE; padding: .4rem .6rem; text-align: left; }
+    th { background: #E7F0EC; }
+    .badge { padding: .1rem .5rem; border-radius: 4px; background: #DCEAE5; }
+    .badge.held { background: #F5E3DF; color: #9a2a20; font-weight: 600; }
+    .note { color: #385959; }
+    fieldset { border: 1px solid #D9E2DE; background: #fff; margin: 1rem 0; }
+    [role=tab] { padding: .3rem .8rem; border: 1px solid #D9E2DE; background: #fff; cursor: pointer; }
+    [role=tab][aria-selected=true] { background: #DCEAE5; }
+  </style>
+</head>
+<body>
+  <nav><a href="/">Results review worklist</a><a href="/config.html">Rule configuration</a></nav>
+  <h1>Rule configuration</h1>
+  <p class="note">Fictional example. Synthetic data. Rule DELTA-CREA. Limits are test values, not clinical guidance.</p>
+  <p><label>Signed in as <select id="user" data-testid="user"></select></label></p>
+
+  <div role="tablist">
+    <button role="tab" id="tab-rule" data-testid="tab-rule" aria-selected="true">Rule</button>
+    <button role="tab" id="tab-history" data-testid="tab-history" aria-selected="false">History</button>
+  </div>
+
+  <section id="panel-rule">
+    <p>Live limit: <strong id="live-limit" data-testid="live-limit"></strong> (window <span id="window"></span> days)</p>
+    <p>Pending proposal: <span id="pending" data-testid="pending">none</span></p>
+    <fieldset>
+      <legend>Propose a new limit</legend>
+      <label>Limit in % <input id="propose-limit" data-testid="propose-limit" type="number" min="1" step="0.1"></label>
+      <label>Reason <input id="propose-reason" data-testid="propose-reason" type="text"></label>
+      <button id="propose-button" data-testid="propose-button">Propose</button>
+    </fieldset>
+    <button id="approve-button" data-testid="approve-button">Approve the pending proposal</button>
+    <p id="message" data-testid="message" role="status"></p>
+  </section>
+
+  <section id="panel-history" hidden>
+    <table>
+      <thead><tr><th>Old value</th><th>New value</th><th>Proposed by</th><th>Approved by</th><th>Proposed at</th><th>Approved at</th><th>Reason</th></tr></thead>
+      <tbody id="history-rows"></tbody>
+    </table>
+  </section>
+
+  <script>
+    const $ = (id) => document.getElementById(id);
+
+    async function api(path, body) {
+      const res = await fetch(path, body ? { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(body) } : undefined);
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message ?? data.error);
+      return data;
+    }
+
+    function showRule(rule) {
+      if (!$("user").options.length) {
+        for (const u of rule.users) $("user").add(new Option(u, u));
+      }
+      $("live-limit").textContent = rule.limitPercent + " %";
+      $("window").textContent = rule.windowDays;
+      $("pending").textContent = rule.pending
+        ? rule.pending.limitPercent + " % proposed by " + rule.pending.proposer + " (waiting for approval)"
+        : "none";
+    }
+
+    async function showHistory() {
+      const rows = await api("/api/history");
+      const body = $("history-rows");
+      body.textContent = "";
+      for (const h of rows) {
+        const tr = document.createElement("tr");
+        tr.dataset.testid = "history-row";
+        for (const v of [h.oldValue + " %", h.newValue + " %", h.proposer, h.approver, h.proposedAt, h.approvedAt, h.reason]) {
+          const td = document.createElement("td");
+          td.textContent = v;
+          tr.appendChild(td);
+        }
+        body.appendChild(tr);
+      }
+    }
+
+    async function run(action) {
+      $("message").textContent = "";
+      try {
+        showRule(await action());
+        await showHistory();
+      } catch (error) {
+        $("message").textContent = error.message;
+      }
+    }
+
+    function selectTab(name) {
+      for (const t of ["rule", "history"]) {
+        $("panel-" + t).hidden = t !== name;
+        $("tab-" + t).setAttribute("aria-selected", String(t === name));
+      }
+    }
+
+    $("tab-rule").onclick = () => selectTab("rule");
+    $("tab-history").onclick = () => selectTab("history");
+    $("propose-button").onclick = () => run(() => api("/api/rule/propose", { user: $("user").value, limitPercent: $("propose-limit").value, reason: $("propose-reason").value }));
+    $("approve-button").onclick = () => run(() => api("/api/rule/approve", { user: $("user").value }));
+
+    run(() => api("/api/rule"));
+  </script>
+</body>
+</html>
